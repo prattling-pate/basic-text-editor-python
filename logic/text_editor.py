@@ -21,3 +21,6 @@ class TextEditor:
     
     def get_cursor_position(self):
         return self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1] + 2
+    
+    def insert_new_line(self):
+        self.__file.modify_contents(NewLine(), self.__cursor.get_cursor_location()[0])

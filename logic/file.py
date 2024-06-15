@@ -13,6 +13,9 @@ class File:
         try:
             with open(self.__path, "r") as file:
                 file_contents = file.readlines()
+                # prevents IndexError when file has nothing inside of it
+                if (len(file_contents) == 0) :
+                    file_contents.append("\n")
         except IOError:
             # (f"cannot write to file @{self.__path}, creating file")
             f = open(self.__path, "x")
