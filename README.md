@@ -1,6 +1,8 @@
 # Python Text Editor
 
-This is a basic terminal text editor which allows us to manipulate a given text file (or any other file that can be opened using some text encoding).
+This is a basic terminal text editor which allows us to manipulate a given text file (or any other file that can be opened using some text encoding).#
+
+Using curses library to display to terminal, but all other logic is self made.
 
 I will attempt to rewrite this in a more appropriate language later down the line.
 
