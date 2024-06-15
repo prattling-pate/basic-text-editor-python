@@ -20,4 +20,4 @@ class TextEditor:
         self.__cursor.move_row(row_movement)
     
     def get_cursor_position(self):
-        return self.__cursor.get_cursor_location()
+        return self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1] + 2

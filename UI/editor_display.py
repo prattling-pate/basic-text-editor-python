@@ -10,11 +10,11 @@ def run(stdscr) -> None:
 
     text_editor = TextEditor("pis2.txt")
     logger = logging.getLogger(__name__)
-    
+
     while running:
 
-        for line in text_editor.get_current_document_contents():
-            stdscr.addstr(line)
+        for i, line in enumerate(text_editor.get_current_document_contents(), 1):
+            stdscr.addstr(f"{i}:{line}")
 
         stdscr.move(*(text_editor.get_cursor_position()))
 
