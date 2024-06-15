@@ -1,5 +1,4 @@
 from logic.text_editor import TextEditor
-import logging
 import curses
 
 def run(stdscr) -> None:
@@ -9,7 +8,6 @@ def run(stdscr) -> None:
     running = True
 
     text_editor = TextEditor("pis2.txt")
-    logger = logging.getLogger(__name__)
 
     while running:
 
@@ -19,8 +17,6 @@ def run(stdscr) -> None:
         stdscr.move(*(text_editor.get_cursor_position()))
 
         user_input = stdscr.getch()
-
-        logger.info(str(stdscr.getyx()))
 
         if user_input == curses.KEY_UP:
             text_editor.move_cursor(-1, 0)
