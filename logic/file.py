@@ -28,6 +28,8 @@ class File:
         """
         self.__contents[line]=command.execute_command(self.__contents[line], *args)
 
-    
+    def get_line(self, line : int):
+        return self.__contents[line]
+
     def get_file_contents(self) -> list[str]:
         return self.__contents

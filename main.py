@@ -1,9 +1,7 @@
-from logic.file import *
-from logic.commands import *
+from UI.editor_display import start_editor
 
-def main() -> None:
-    """Entry point into application"""
-
-
+def main():
+    start_editor()
+    
 if __name__ == "__main__":
     main()

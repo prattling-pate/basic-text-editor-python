@@ -12,6 +12,11 @@ def _insert(line: str, index : int, newchar : str):
     newline = line[0:index] + newchar + line[index:]
     return newline
 
+def _append(line: str, newchar : str):
+    newline = line + "\n" + newchar
+    return newline
+
+
 class Command:
     """Class representing a text editing command"""
     def __init__(self, fn : Callable):
@@ -31,3 +36,7 @@ class Change(Command):
 class Insert(Command):
     def __init__(self):
         super().__init__(_insert)
+    
+class Append(Command):
+    def __init__(self):
+        super().__init__(_append)
