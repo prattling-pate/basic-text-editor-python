@@ -17,6 +17,7 @@ I will attempt to rewrite this in a more appropriate language later down the lin
 7. Storing states between opening files (closing file doesn't remove the undo/redo trees, last cursor location etc.)
  - Make this a seperate data object
 8. Mouse support
+9. Custom binding for actions using a config file (.json, .ini, .cfg etc.)
 
 ## Directory structure
 1. UI classes/abstractions in one folder
