@@ -1,20 +1,25 @@
 from logic.commands import Command
+import logging
 
 class File:
     """Class representing the abstraction of a file in the text editor"""
 
     def __init__(self, file_path: str):
         self.__path : str = file_path
+        self.__logger = logging.getLogger(__name__)
         self.__contents : list[str] = self.__fetch_file_contents()
 
     def __fetch_file_contents(self) -> list[str]:
         """Returns the contents of the file represented in object as a list of strings"""
-        file_contents: list[str] = []
+        file_contents: list[str] = ["\n"]
         try:
             with open(self.__path, "r") as file:
                 file_contents = file.readlines()
         except IOError:
-            print(f"cannot write to file @{self.__path}")
+            self.__logger.info(f"cannot write to file @{self.__path}, creating file")
+            f = open(self.__path, "x")
+            f.write(file_contents[0])
+            f.close()
         return file_contents
 
     def write_to_file(self):
