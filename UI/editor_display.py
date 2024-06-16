@@ -12,7 +12,7 @@ def run(stdscr) -> None:
 
     running = True
 
-    file_path = "output.txt"
+    file_path = "program.py"
 
     text_editor = TextEditor(file_path)
 
@@ -51,6 +51,10 @@ def run(stdscr) -> None:
         # enter key is equal to 10
         elif user_input == 10:
             text_editor.insert_new_line()
+        elif user_input == ord(' '):
+            text_editor.write_character(' ')
+        elif user_input == ord('('):
+            text_editor.write_character("(")
         elif chr(user_input).isalnum():
             text_editor.write_character(chr(user_input))
         text_editor.refresh()
