@@ -4,4 +4,4 @@ def main():
     start_editor()
 
 if __name__ == "__main__":
-    main()
+   main()

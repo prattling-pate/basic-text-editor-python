@@ -43,3 +43,6 @@ class Cursor:
 
     def get_cursor_location(self) -> tuple[int, int]:
         return (self.__row_number, self.__column_number)
+    
+    def set_document_row_length(self, new_row_length : int):
+        self.__document_row_length = new_row_length

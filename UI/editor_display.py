@@ -11,7 +11,9 @@ def run(stdscr) -> None:
 
     running = True
 
-    text_editor = TextEditor("pis2.txt")
+    file_path = "pis2.txt"
+
+    text_editor = TextEditor(file_path)
 
     logger.log("Text editor launched")
 
@@ -34,17 +36,19 @@ def run(stdscr) -> None:
             text_editor.move_cursor(0, -1)
         elif user_input == curses.KEY_RIGHT:
             text_editor.move_cursor(0, 1)
-        elif user_input == curses.KEY_HOME:
+        elif user_input == 330:
+            text_editor.delete_current_line()
+        elif user_input == 27:
             running = False
         # enter key is equal to 10
         elif user_input == 10:
             text_editor.insert_new_line()
-            logger.log(str(text_editor.get_current_document_contents()))
 
-        
         stdscr.clear()
         stdscr.refresh()
 
+    text_editor.save_file()
+    logger.log(f"File {file_path}")
     logger.log("Closing text editor")
     logger.write_log()
 

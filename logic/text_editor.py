@@ -11,6 +11,7 @@ class TextEditor:
     def __init__(self, file_path : str):
         self.__file = File(file_path)
         self.__cursor = Cursor(len(self.__file.get_file_contents()), len(self.__file.get_line(0)))
+        self.__temp_list = []
     
     def get_current_document_contents(self):
         return self.__file.get_file_contents()
@@ -18,9 +19,53 @@ class TextEditor:
     def move_cursor(self, row_movement : int, column_movement : int) -> None:
         self.__cursor.move_column(column_movement)
         self.__cursor.move_row(row_movement)
+        self.__cursor.set_current_line_length(len(self.__file.get_line(self.__cursor.get_cursor_location()[0])))
     
     def get_cursor_position(self):
         return self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1] + 2
     
     def insert_new_line(self):
         self.__file.modify_contents(NewLine(), self.__cursor.get_cursor_location()[0])
+        self.__clean_contents()
+        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
+        
+    def __recurse_on_file_contents_delimiter(self, string, delimiter):
+        try:
+            n = string.index(delimiter)
+            self.__recurse_on_file_contents_delimiter(string[0:n], delimiter)
+            self.__recurse_on_file_contents_delimiter(string[n+len(delimiter):], delimiter)
+        except ValueError:
+            self.__temp_list.append(string + delimiter)
+
+
+    def __split_on_file_delimiter(self, delimiter : str):
+        temp_file_contents = self.__file.get_file_contents().copy()
+        for line in temp_file_contents:
+            line = line[0:len(line)-len(delimiter)]
+            self.__recurse_on_file_contents_delimiter(line, delimiter)
+
+    def __clean_contents(self) -> None:
+        self.__temp_list = []
+        self.__split_on_file_delimiter("\n")
+        self.__file.set_file_contents(self.__temp_list)
+
+    def save_file(self):
+        self.__file.write_to_file()
+
+    def __delete_empty_lines(self):
+        temp_list = self.__file.get_file_contents()
+        i = 0
+        while (i < len(temp_list)):
+            if len(temp_list[i]) <= 0 :
+                temp_list.pop(i)
+            i+=1
+        self.__file.set_file_contents(temp_list)
+
+    def delete_current_line(self):
+        self.__file.modify_contents(DeleteLine(), self.__cursor.get_cursor_location()[0])
+        if (len(self.__file.get_file_contents()) > 1):
+            self.__delete_empty_lines()
+        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
+        if (self.__cursor.get_cursor_location()[0] >= len(self.__file.get_file_contents())):
+            self.move_cursor(-1,0)
+

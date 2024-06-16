@@ -20,6 +20,9 @@ def _new_line(line : str):
     newline = line + "\n"
     return newline
 
+def _delete_line(line : str):
+    return ""
+
 
 class Command:
     """Class representing a text editing command"""
@@ -48,3 +51,7 @@ class Append(Command):
 class NewLine(Command):
     def __init__(self):
         super().__init__(_new_line)
+
+class DeleteLine(Command):
+    def __init__(self):
+        super().__init__(_delete_line)

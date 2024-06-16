@@ -37,5 +37,12 @@ class File:
     def get_line(self, line : int):
         return self.__contents[line]
 
+    def set_line(self, line : int, new_line : str):
+        self.__contents[line] = new_line
+
     def get_file_contents(self) -> list[str]:
         return self.__contents
+
+    def set_file_contents(self, new_file_contents : list[str]):
+        self.__contents = new_file_contents
+    
