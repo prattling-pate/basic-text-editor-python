@@ -2,6 +2,7 @@ from utility.logger import Logger
 from logic.text_editor import TextEditor
 import curses
 
+
 def run(stdscr) -> None:
     """Entry point into application"""
 
@@ -11,7 +12,7 @@ def run(stdscr) -> None:
 
     running = True
 
-    file_path = "pis2.txt"
+    file_path = "output.txt"
 
     text_editor = TextEditor(file_path)
 
@@ -38,11 +39,15 @@ def run(stdscr) -> None:
             text_editor.move_cursor(0, 1)
         elif user_input == 330:
             text_editor.delete_current_line()
+        elif user_input == 263:
+            text_editor.remove_character()
         elif user_input == 27:
             running = False
         # enter key is equal to 10
         elif user_input == 10:
             text_editor.insert_new_line()
+        elif chr(user_input).isalnum():
+            text_editor.write_character(chr(user_input))
 
         stdscr.clear()
         stdscr.refresh()
@@ -51,6 +56,7 @@ def run(stdscr) -> None:
     logger.log(f"File {file_path}")
     logger.log("Closing text editor")
     logger.write_log()
+
 
 def start_editor():
     curses.wrapper(run)

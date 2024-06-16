@@ -1,3 +1,5 @@
+from utility.logger import Logger
+
 class Cursor:
     """Class representing a user's cursor"""
     def __init__(self, document_row_length : int, current_line_length : int) -> None:
@@ -17,6 +19,7 @@ class Cursor:
         Move cursor right direction amount of times,
         if it reaches the bounds of the row it will not leave the row.
         """
+        logger = Logger("log2.txt")
         if (self.__column_number + direction < 0):
             self.__column_number = 0
             return
@@ -24,6 +27,7 @@ class Cursor:
             self.__column_number = self.__current_line_length - 1
             return
         self.__column_number += direction
+        logger.log(str(self.__column_number))
     
     def move_row(self, direction : int) -> None:
         """
