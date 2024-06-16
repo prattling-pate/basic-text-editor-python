@@ -1,18 +1,19 @@
 from utility.logger import Logger
 from logic.text_editor import TextEditor
 import curses
+import sys
 
 
 def run(stdscr) -> None:
     """Entry point into application"""
+
+    file_path=sys.argv[1]
 
     logger = Logger("log.txt")
 
     stdscr.clear()
 
     running = True
-
-    file_path = "program.py"
 
     text_editor = TextEditor(file_path)
 
@@ -56,12 +57,10 @@ def run(stdscr) -> None:
         # enter key is equal to 10
         elif user_input == 10:
             text_editor.insert_new_line()
-        elif user_input == ord(" "):
-            text_editor.write_character(" ")
-        elif user_input == ord("("):
-            text_editor.write_character("(")
-        elif chr(user_input).isalnum():
+        elif chr(user_input).isascii():
             text_editor.write_character(chr(user_input))
+
+        
         text_editor.refresh()
 
         logger.log(str(text_editor.get_current_document_contents()))

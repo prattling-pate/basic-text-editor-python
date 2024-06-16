@@ -80,20 +80,7 @@ class TextEditor:
         )
 
     def write_character(self, char: str) -> None:
-        if (
-            self.__cursor.get_insert_state()
-            or len(self.__file.get_line(self.get_cursor_position()[0])) == 1
-        ):
-            self.__file.modify_contents(
-                Insert(), *self.__cursor.get_cursor_location(), char
-            )
-        else:
-            self.__file.modify_contents(
-                Insert(),
-                self.__cursor.get_cursor_location()[0],
-                self.__cursor.get_cursor_location()[1] + 1,
-                char,
-            )
+        self.__file.modify_contents(Insert(), *self.__cursor.get_cursor_location(), char)
         self.__cursor.set_current_line_length(
             len(self.__file.get_line(self.__cursor.get_cursor_location()[0]))
         )
@@ -101,7 +88,11 @@ class TextEditor:
 
     def remove_character(self) -> None:
         self.__cursor.move_column(-1)
-        self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
+        current_line = self.get_cursor_position()[0]
+        if len(self.__file.get_line(current_line)) == 0:
+            self.delete_current_line()
+        else:
+            self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
 
     def get_insert_state(self) -> bool:
         return self.__cursor.get_insert_state()

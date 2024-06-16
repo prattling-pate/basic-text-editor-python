@@ -13,7 +13,7 @@ class File:
         file_contents: list[str] = [""]
         try:
             with open(self.__path, "r") as file:
-                file_contents = list(map(str.strip, file.readlines()))
+                file_contents = list(map(str.rstrip, file.readlines()))
                 # prevents IndexError when file has nothing inside of it
                 if len(file_contents) == 0:
                     file_contents.append("")
