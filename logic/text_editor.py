@@ -11,13 +11,13 @@ class TextEditor:
     """
 
     def __init__(self, file_path: str):
-        self.__file = File(file_path)
-        self.__cursor = Cursor(
-            len(self.__file.get_file_contents()), len(self.__file.get_line(0))
+        self._file = File(file_path)
+        self._cursor = Cursor(
+            len(self._file.get_file_contents()), len(self._file.get_line(0))
         )
-        self.__indent_size = 4
+        self._indent_size = 4
 
-    def __get_current_line_length(self):
+    def _get_current_line_length(self):
         lines = self.get_current_document_contents()
         cursor_row = self.get_cursor_position()[0]
         return len(lines[cursor_row])
@@ -26,83 +26,83 @@ class TextEditor:
         """
         Returns the file contents as a list of strings (each entry is a row).
         """
-        return self.__file.get_file_contents()
+        return self._file.get_file_contents()
 
     def move_cursor(self, row_movement: int, column_movement: int) -> None:
         """
         Moves the cursor row_movement rows to the right and column_movement columns down.
         """
-        self.__cursor.move_column(column_movement)
-        self.__cursor.move_row(row_movement)
-        self.__cursor.set_current_line_length(self.__get_current_line_length())
+        self._cursor.move_column(column_movement)
+        self._cursor.move_row(row_movement)
+        self._cursor.set_current_line_length(self._get_current_line_length())
 
     def get_cursor_position(self):
-        return self.__cursor.get_cursor_location()
+        return self._cursor.get_cursor_location()
 
     def insert_new_line(self):
         """
         Inserts a new line where the cursor is currently pointing
         """
-        self.__file.modify_contents(NewLine(), *self.__cursor.get_cursor_location())
+        self._file.modify_contents(NewLine(), *self._cursor.get_cursor_location())
         temp_list = []
         for line in self.get_current_document_contents():
             temp_list += line.split("\n")
-        self.__file.set_file_contents(temp_list)
-        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
+        self._file.set_file_contents(temp_list)
+        self._cursor.set_document_row_length(len(self._file.get_file_contents()))
         self.move_cursor(1, 0)
 
     def save_file(self):
         """
         Writes the stored file changes to the file associated to it.
         """
-        self.__file.write_to_file()
+        self._file.write_to_file()
 
-    def __delete_line(self, i: int):
+    def _delete_line(self, i: int):
         temp = self.get_current_document_contents()
         temp.pop(i)
-        self.__file.set_file_contents(temp)
+        self._file.set_file_contents(temp)
 
     def delete_current_line(self) -> None:
         """
         Deletes the line that the cursor is currently pointing to.
         """
-        self.__file.modify_contents(
-            DeleteLine(), self.__cursor.get_cursor_location()[0]
+        self._file.modify_contents(
+            DeleteLine(), self._cursor.get_cursor_location()[0]
         )
         if len(self.get_current_document_contents()) > 1:
-            self.__delete_line(self.__cursor.get_cursor_location()[0])
-        if self.__cursor.get_cursor_location()[0] >= len(
-            self.__file.get_file_contents()
+            self._delete_line(self._cursor.get_cursor_location()[0])
+        if self._cursor.get_cursor_location()[0] >= len(
+            self._file.get_file_contents()
         ):
-            self.__cursor.move_row(-1)
-        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
-        self.__cursor.set_current_line_length(self.__get_current_line_length())
+            self._cursor.move_row(-1)
+        self._cursor.set_document_row_length(len(self._file.get_file_contents()))
+        self._cursor.set_current_line_length(self._get_current_line_length())
 
     def write_character(self, char: str) -> None:
-        self.__file.modify_contents(Insert(), *self.__cursor.get_cursor_location(), char)
-        self.__cursor.set_current_line_length(self.__get_current_line_length())
-        self.__cursor.move_column(1)
+        self._file.modify_contents(Insert(), *self._cursor.get_cursor_location(), char)
+        self._cursor.set_current_line_length(self._get_current_line_length())
+        self._cursor.move_column(1)
 
     def remove_character(self) -> None:
-        self.__cursor.move_column(-1)
+        self._cursor.move_column(-1)
         current_line = self.get_cursor_position()[0]
-        if len(self.__file.get_line(current_line)) == 0:
+        if len(self._file.get_line(current_line)) == 0:
             self.delete_current_line()
         else:
-            self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
+            self._file.modify_contents(Delete(), *self._cursor.get_cursor_location())
 
     def get_insert_state(self) -> bool:
-        return self.__cursor.get_insert_state()
+        return self._cursor.get_insert_state()
 
     def refresh(self):
         """
         Refreshes the stored length of the document and stored current line length
         """
-        row_length_of_document = len(self.__file.get_file_contents())
-        self.__cursor.set_document_row_length(row_length_of_document)
-        self.__cursor.set_current_line_length(self.__get_current_line_length())
-        self.__cursor.check_bounds()
+        row_length_of_document = len(self._file.get_file_contents())
+        self._cursor.set_document_row_length(row_length_of_document)
+        self._cursor.set_current_line_length(self._get_current_line_length())
+        self._cursor.check_bounds()
 
     def insert_tab(self):
-        for i in range(self.__indent_size):
+        for i in range(self._indent_size):
             self.write_character(" ")
