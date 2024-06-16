@@ -17,6 +17,11 @@ class TextEditor:
         )
         self.__indent_size = 4
 
+    def __get_current_line_length(self):
+        lines = self.get_current_document_contents()
+        cursor_row = self.get_cursor_position()[0]
+        return len(lines[cursor_row])
+    
     def get_current_document_contents(self):
         """
         Returns the file contents as a list of strings (each entry is a row).
@@ -29,15 +34,10 @@ class TextEditor:
         """
         self.__cursor.move_column(column_movement)
         self.__cursor.move_row(row_movement)
-        self.__cursor.set_current_line_length(
-            len(self.__file.get_line(self.__cursor.get_cursor_location()[0]))
-        )
+        self.__cursor.set_current_line_length(self.__get_current_line_length())
 
     def get_cursor_position(self):
-        return (
-            self.__cursor.get_cursor_location()[0],
-            self.__cursor.get_cursor_location()[1],
-        )
+        return self.__cursor.get_cursor_location()
 
     def insert_new_line(self):
         """
@@ -76,15 +76,11 @@ class TextEditor:
         ):
             self.__cursor.move_row(-1)
         self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
-        self.__cursor.set_current_line_length(
-            len(self.__file.get_line(self.get_cursor_position()[0]))
-        )
+        self.__cursor.set_current_line_length(self.__get_current_line_length())
 
     def write_character(self, char: str) -> None:
         self.__file.modify_contents(Insert(), *self.__cursor.get_cursor_location(), char)
-        self.__cursor.set_current_line_length(
-            len(self.__file.get_line(self.__cursor.get_cursor_location()[0]))
-        )
+        self.__cursor.set_current_line_length(self.__get_current_line_length())
         self.__cursor.move_column(1)
 
     def remove_character(self) -> None:
@@ -103,10 +99,8 @@ class TextEditor:
         Refreshes the stored length of the document and stored current line length
         """
         row_length_of_document = len(self.__file.get_file_contents())
-        current_line = self.get_cursor_position()[0]
-        current_line_length = len(self.__file.get_line(current_line))
         self.__cursor.set_document_row_length(row_length_of_document)
-        self.__cursor.set_current_line_length(current_line_length)
+        self.__cursor.set_current_line_length(self.__get_current_line_length())
         self.__cursor.check_bounds()
 
     def insert_tab(self):

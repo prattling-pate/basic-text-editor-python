@@ -35,5 +35,6 @@ I will attempt to rewrite this in a more appropriate language later down the lin
  # Usage
 
  cd into the directory:
-
+```
  python main.py <name of the file you want to edit/create>
+ ```
