@@ -88,8 +88,8 @@ class TextEditor:
         self.__cursor.move_column(1)
 
     def remove_character(self):
-        self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
         self.__cursor.move_column(-1)
+        self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
 
     def get_insert_state(self):
         return self.__cursor.get_insert_state()

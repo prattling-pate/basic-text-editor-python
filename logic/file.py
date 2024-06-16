@@ -7,15 +7,12 @@ class File:
         self.__path : str = file_path
         self.__contents : list[str] = self.__fetch_file_contents()
 
-    def __strip_new_lines(self, string : str):
-        return string.rstrip()
-
     def __fetch_file_contents(self) -> list[str]:
         """Returns the contents of the file represented in object as a list of strings"""
         file_contents: list[str] = [""]
         try:
             with open(self.__path, "r") as file:
-                file_contents = list(map(self.__strip_new_lines, file.readlines()))
+                file_contents = list(map(str.strip, file.readlines()))
                 # prevents IndexError when file has nothing inside of it
                 if (len(file_contents) == 0) :
                     file_contents.append("")
