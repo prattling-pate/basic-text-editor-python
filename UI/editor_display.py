@@ -27,8 +27,8 @@ def run(stdscr) -> None:
         stdscr.move(
             text_editor.get_cursor_position()[0],
             text_editor.get_cursor_position()[1]
-            + len(str(text_editor.get_cursor_position()[0]))
-            + 1,
+            + len(str(text_editor.get_cursor_position()[0] + 1))
+            + 1
         )
 
         user_input = stdscr.getch()
@@ -57,6 +57,8 @@ def run(stdscr) -> None:
         # enter key is equal to 10
         elif user_input == 10:
             text_editor.insert_new_line()
+        elif user_input == ord("\t"):
+            text_editor.insert_tab()
         elif chr(user_input).isascii():
             text_editor.write_character(chr(user_input))
 

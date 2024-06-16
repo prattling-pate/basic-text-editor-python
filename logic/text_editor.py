@@ -15,6 +15,7 @@ class TextEditor:
         self.__cursor = Cursor(
             len(self.__file.get_file_contents()), len(self.__file.get_line(0))
         )
+        self.__indent_size = 4
 
     def get_current_document_contents(self):
         """
@@ -107,3 +108,7 @@ class TextEditor:
         self.__cursor.set_document_row_length(row_length_of_document)
         self.__cursor.set_current_line_length(current_line_length)
         self.__cursor.check_bounds()
+
+    def insert_tab(self):
+        for i in range(self.__indent_size):
+            self.write_character(" ")
