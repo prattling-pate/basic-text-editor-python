@@ -22,6 +22,9 @@ class TextEditor:
         cursor_row = self.get_cursor_position()[0]
         return len(lines[cursor_row])
     
+    def _get_current_number_of_rows(self):
+        return len(self.get_current_document_contents())
+    
     def get_current_document_contents(self):
         """
         Returns the file contents as a list of strings (each entry is a row).
@@ -48,7 +51,7 @@ class TextEditor:
         for line in self.get_current_document_contents():
             temp_list += line.split("\n")
         self._file.set_file_contents(temp_list)
-        self._cursor.set_document_row_length(len(self._file.get_file_contents()))
+        self._cursor.set_document_row_length(self._get_current_number_of_rows())
         self.move_cursor(1, 0)
 
     def save_file(self):
@@ -75,7 +78,7 @@ class TextEditor:
             self._file.get_file_contents()
         ):
             self._cursor.move_row(-1)
-        self._cursor.set_document_row_length(len(self._file.get_file_contents()))
+        self._cursor.set_document_row_length(self._get_current_number_of_rows())
         self._cursor.set_current_line_length(self._get_current_line_length())
 
     def write_character(self, char: str) -> None:
@@ -98,8 +101,7 @@ class TextEditor:
         """
         Refreshes the stored length of the document and stored current line length
         """
-        row_length_of_document = len(self._file.get_file_contents())
-        self._cursor.set_document_row_length(row_length_of_document)
+        self._cursor.set_document_row_length(self._get_current_number_of_rows())
         self._cursor.set_current_line_length(self._get_current_line_length())
         self._cursor.check_bounds()
 
