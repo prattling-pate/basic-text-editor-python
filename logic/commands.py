@@ -1,6 +1,8 @@
 from typing import Callable
 
 def _delete(line : str, index : int) -> str:
+    if (len(line) <= 2):
+        return line[index]
     newline = line[0:index] + line[index+1:]
     return newline
 

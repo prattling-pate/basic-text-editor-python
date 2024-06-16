@@ -27,7 +27,6 @@ class Cursor:
             self.__column_number = self.__current_line_length - 1
             return
         self.__column_number += direction
-        logger.log(str(self.__column_number))
     
     def move_row(self, direction : int) -> None:
         """
