@@ -23,7 +23,12 @@ def run(stdscr) -> None:
         for i, line in enumerate(text_editor.get_current_document_contents(), 1):
             stdscr.addstr(f"{i}:{line}\n")
 
-        stdscr.move(text_editor.get_cursor_position()[0],text_editor.get_cursor_position()[1] + len(str(text_editor.get_cursor_position()[0])) + 1)
+        stdscr.move(
+            text_editor.get_cursor_position()[0],
+            text_editor.get_cursor_position()[1]
+            + len(str(text_editor.get_cursor_position()[0]))
+            + 1,
+        )
 
         user_input = stdscr.getch()
 
@@ -51,9 +56,9 @@ def run(stdscr) -> None:
         # enter key is equal to 10
         elif user_input == 10:
             text_editor.insert_new_line()
-        elif user_input == ord(' '):
-            text_editor.write_character(' ')
-        elif user_input == ord('('):
+        elif user_input == ord(" "):
+            text_editor.write_character(" ")
+        elif user_input == ord("("):
             text_editor.write_character("(")
         elif chr(user_input).isalnum():
             text_editor.write_character(chr(user_input))
