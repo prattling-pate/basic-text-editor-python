@@ -7,26 +7,30 @@ class File:
         self.__path : str = file_path
         self.__contents : list[str] = self.__fetch_file_contents()
 
+    def __strip_new_lines(self, string : str):
+        return string.rstrip()
+
     def __fetch_file_contents(self) -> list[str]:
         """Returns the contents of the file represented in object as a list of strings"""
-        file_contents: list[str] = ["\n"]
+        file_contents: list[str] = [""]
         try:
             with open(self.__path, "r") as file:
-                file_contents = file.readlines()
+                file_contents = list(map(self.__strip_new_lines, file.readlines()))
                 # prevents IndexError when file has nothing inside of it
                 if (len(file_contents) == 0) :
-                    file_contents.append("\n")
+                    file_contents.append("")
         except IOError:
             # (f"cannot write to file @{self.__path}, creating file")
             f = open(self.__path, "x")
-            f.write(file_contents[0])
+            f.write("")
             f.close()
         return file_contents
 
     def write_to_file(self):
         """Writes current contents to file on disk"""
         with open(self.__path, "w") as file:
-            file.writelines(self.__contents)
+            for line in self.__contents:
+                file.write(line + "\n")
 
     def modify_contents(self,command : Command, line : int , *args) -> None:
         """

@@ -33,7 +33,7 @@ class TextEditor:
         )
 
     def insert_new_line(self):
-        self.__file.modify_contents(NewLine(), self.__cursor.get_cursor_location()[0])
+        self.__file.modify_contents(NewLine(), *self.__cursor.get_cursor_location())
         self.__clean_contents()
         self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
         self.move_cursor(1, 0)
@@ -46,55 +46,49 @@ class TextEditor:
                 string[n + len(delimiter) :], delimiter, temp_list
             )
         except ValueError:
-            temp_list.append(string + delimiter)
+            temp_list.append(string)
 
     def __split_on_file_delimiter(self, delimiter: str, temp_list):
         temp_file_contents = self.__file.get_file_contents().copy()
         for line in temp_file_contents:
-            line = line[0 : len(line) - len(delimiter)]
             self.__recurse_on_file_contents_delimiter(line, delimiter, temp_list)
 
     def __clean_contents(self) -> None:
         temp_list = []
         self.__split_on_file_delimiter("\n", temp_list)
+        temp_list = list(map(str.rstrip, temp_list))
         self.__file.set_file_contents(temp_list)
 
     def save_file(self):
         self.__file.write_to_file()
 
-    def __delete_empty_lines(self):
-        temp_list = self.__file.get_file_contents()
-        i = 0
-        while i < len(temp_list):
-            if len(temp_list[i]) <= 0:
-                temp_list.pop(i)
-            i += 1
-        self.__file.set_file_contents(temp_list)
+    def __delete_line(self, i : int):
+        temp=self.get_current_document_contents()
+        temp.pop(i)
+        self.__file.set_file_contents(temp)
 
     def delete_current_line(self):
         self.__file.modify_contents(
             DeleteLine(), self.__cursor.get_cursor_location()[0]
         )
-        if len(self.__file.get_file_contents()) > 1:
-            self.__delete_empty_lines()
-        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
-        self.__cursor.set_current_line_length(len(self.__file.get_line(self.get_cursor_position()[0])))
+        # deletes the now empty line
+        if len(self.get_current_document_contents()) > 1:
+            self.__delete_line(self.__cursor.get_cursor_location()[0])
         if self.__cursor.get_cursor_location()[0] >= len(self.__file.get_file_contents()):
             self.__cursor.move_row(-1)
+        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
+        self.__cursor.set_current_line_length(len(self.__file.get_line(self.get_cursor_position()[0])))
 
     def write_character(self, char: str):
         if self.__cursor.get_insert_state() or len(self.__file.get_line(self.get_cursor_position()[0])) == 1:
             self.__file.modify_contents(Insert(), *self.__cursor.get_cursor_location(), char)
         else:
-            self.__cursor.set_current_line_length(len(self.__file.get_line(self.__cursor.get_cursor_location()[0])))
-        self.__file.modify_contents(Insert(), self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1]+1, char)
+            self.__file.modify_contents(Insert(), self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1]+1, char)
+        self.__cursor.set_current_line_length(len(self.__file.get_line(self.__cursor.get_cursor_location()[0])))
         self.__cursor.move_column(1)
 
     def remove_character(self):
-        if (self.__cursor.get_insert_state()):
-            self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
-            return
-        self.__file.modify_contents(Delete(), self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1] + 1)
+        self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
         self.__cursor.move_column(-1)
 
     def get_insert_state(self):
@@ -103,3 +97,4 @@ class TextEditor:
     def refresh(self):
         self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
         self.__cursor.set_current_line_length(len(self.__file.get_line(self.get_cursor_position()[0])))
+        self.__cursor.check_bounds()

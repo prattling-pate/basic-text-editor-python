@@ -39,7 +39,7 @@ class Cursor:
         self.__row_number += direction
 
     def set_current_line_length(self, new_line_length):
-        self.__current_line_length = new_line_length
+        self.__current_line_length = new_line_length + 1
 
     def get_cursor_location(self) -> tuple[int, int]:
         return (self.__row_number, self.__column_number)
@@ -49,3 +49,13 @@ class Cursor:
 
     def get_insert_state(self):
         return self.__insert
+    
+    def check_bounds(self):
+        if (self.__row_number < 0):
+            self.__row_number = 0
+        elif (self.__row_number>= self.__document_row_length):
+            self.__row_number = self.__document_row_length - 1
+        if (self.__column_number < 0):
+            self.__column_number = 0
+        elif (self.__column_number >= self.__current_line_length):
+            self.__column_number = self.__current_line_length - 1

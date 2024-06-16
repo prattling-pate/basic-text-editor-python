@@ -21,15 +21,15 @@ def run(stdscr) -> None:
     while running:
 
         for i, line in enumerate(text_editor.get_current_document_contents(), 1):
-            stdscr.addstr(f"{i}:{line}")
+            stdscr.addstr(f"{i}:{line}\n")
 
-        stdscr.move(text_editor.get_cursor_position()[0], text_editor.get_cursor_position()[1] + 2)
+        stdscr.move(text_editor.get_cursor_position()[0],text_editor.get_cursor_position()[1] + len(str(text_editor.get_cursor_position()[0])) + 1)
 
         user_input = stdscr.getch()
 
         logger.log("key pressed: " + str(user_input))
 
-        if (text_editor.get_insert_state()):
+        if text_editor.get_insert_state():
             curses.curs_set(2)
         else:
             curses.curs_set(1)
@@ -54,7 +54,7 @@ def run(stdscr) -> None:
         elif chr(user_input).isalnum():
             text_editor.write_character(chr(user_input))
         text_editor.refresh()
-        
+
         logger.log(str(text_editor.get_current_document_contents()))
         logger.log(str(text_editor.get_cursor_position()))
 
