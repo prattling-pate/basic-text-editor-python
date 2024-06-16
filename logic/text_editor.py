@@ -34,30 +34,13 @@ class TextEditor:
 
     def insert_new_line(self):
         self.__file.modify_contents(NewLine(), *self.__cursor.get_cursor_location())
-        self.__clean_contents()
+        temp_list = []
+        for line in self.get_current_document_contents():
+            temp_list += line.split("\n")
+        self.__file.set_file_contents(temp_list)
         self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
         self.move_cursor(1, 0)
 
-    def __recurse_on_file_contents_delimiter(self, string, delimiter, temp_list ):
-        try:
-            n = string.index(delimiter)
-            self.__recurse_on_file_contents_delimiter(string[0:n], delimiter, temp_list)
-            self.__recurse_on_file_contents_delimiter(
-                string[n + len(delimiter) :], delimiter, temp_list
-            )
-        except ValueError:
-            temp_list.append(string)
-
-    def __split_on_file_delimiter(self, delimiter: str, temp_list):
-        temp_file_contents = self.__file.get_file_contents().copy()
-        for line in temp_file_contents:
-            self.__recurse_on_file_contents_delimiter(line, delimiter, temp_list)
-
-    def __clean_contents(self) -> None:
-        temp_list = []
-        self.__split_on_file_delimiter("\n", temp_list)
-        temp_list = list(map(str.rstrip, temp_list))
-        self.__file.set_file_contents(temp_list)
 
     def save_file(self):
         self.__file.write_to_file()
