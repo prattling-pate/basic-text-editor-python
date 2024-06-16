@@ -1,9 +1,12 @@
 from typing import Callable
 
+
 def _delete(line : str, index : int) -> str:
-    if (len(line) <= 2):
-        return line[index]
+    from utility.logger import Logger
+    logger = Logger("log_commands.txt")
     newline = line[0:index] + line[index+1:]
+    logger.log("<DELETE> " + repr(line)+ " : " + repr(line[0:index]) + " : " + repr(line[index+1:]))
+    logger.write_log()
     return newline
 
 def _change(line : str, index : int, newchar : str):
@@ -11,7 +14,15 @@ def _change(line : str, index : int, newchar : str):
     return newline
 
 def _insert(line: str, index : int, newchar : str):
+    # # special case as len("\n") == 1 and not 2 as expected
+    # if (line == "\n"):
+    #     newline = newchar + line
+    # else:
+    from utility.logger import Logger
+    logger =Logger("log_commands.txt")
     newline = line[0:index] + newchar + line[index:]
+    logger.log("<Insert> " + repr(line)+ " : " + repr(line[0:index]) + " : " + repr(line[index:]))
+    logger.write_log()
     return newline
 
 def _append(line: str, newchar : str):
@@ -22,7 +33,7 @@ def _new_line(line : str):
     newline = line + "\n"
     return newline
 
-def _delete_line(line : str):
+def _delete_line(*args):
     return ""
 
 

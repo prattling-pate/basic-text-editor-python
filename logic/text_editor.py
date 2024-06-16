@@ -15,7 +15,6 @@ class TextEditor:
         self.__cursor = Cursor(
             len(self.__file.get_file_contents()), len(self.__file.get_line(0))
         )
-        self.__temp_list = []
 
     def get_current_document_contents(self):
         return self.__file.get_file_contents()
@@ -30,7 +29,7 @@ class TextEditor:
     def get_cursor_position(self):
         return (
             self.__cursor.get_cursor_location()[0],
-            self.__cursor.get_cursor_location()[1] + 2,
+            self.__cursor.get_cursor_location()[1],
         )
 
     def insert_new_line(self):
@@ -39,26 +38,26 @@ class TextEditor:
         self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
         self.move_cursor(1, 0)
 
-    def __recurse_on_file_contents_delimiter(self, string, delimiter):
+    def __recurse_on_file_contents_delimiter(self, string, delimiter, temp_list ):
         try:
             n = string.index(delimiter)
-            self.__recurse_on_file_contents_delimiter(string[0:n], delimiter)
+            self.__recurse_on_file_contents_delimiter(string[0:n], delimiter, temp_list)
             self.__recurse_on_file_contents_delimiter(
-                string[n + len(delimiter) :], delimiter
+                string[n + len(delimiter) :], delimiter, temp_list
             )
         except ValueError:
-            self.__temp_list.append(string + delimiter)
+            temp_list.append(string + delimiter)
 
-    def __split_on_file_delimiter(self, delimiter: str):
+    def __split_on_file_delimiter(self, delimiter: str, temp_list):
         temp_file_contents = self.__file.get_file_contents().copy()
         for line in temp_file_contents:
             line = line[0 : len(line) - len(delimiter)]
-            self.__recurse_on_file_contents_delimiter(line, delimiter)
+            self.__recurse_on_file_contents_delimiter(line, delimiter, temp_list)
 
     def __clean_contents(self) -> None:
-        self.__temp_list = []
-        self.__split_on_file_delimiter("\n")
-        self.__file.set_file_contents(self.__temp_list)
+        temp_list = []
+        self.__split_on_file_delimiter("\n", temp_list)
+        self.__file.set_file_contents(temp_list)
 
     def save_file(self):
         self.__file.write_to_file()
@@ -79,15 +78,28 @@ class TextEditor:
         if len(self.__file.get_file_contents()) > 1:
             self.__delete_empty_lines()
         self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
-        if self.__cursor.get_cursor_location()[0] >= len(
-            self.__file.get_file_contents()
-        ):
+        self.__cursor.set_current_line_length(len(self.__file.get_line(self.get_cursor_position()[0])))
+        if self.__cursor.get_cursor_location()[0] >= len(self.__file.get_file_contents()):
             self.__cursor.move_row(-1)
 
     def write_character(self, char: str):
-        self.__file.modify_contents(Insert(), *self.get_cursor_position(), char)
+        if self.__cursor.get_insert_state() or len(self.__file.get_line(self.get_cursor_position()[0])) == 1:
+            self.__file.modify_contents(Insert(), *self.__cursor.get_cursor_location(), char)
+        else:
+            self.__cursor.set_current_line_length(len(self.__file.get_line(self.__cursor.get_cursor_location()[0])))
+        self.__file.modify_contents(Insert(), self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1]+1, char)
         self.__cursor.move_column(1)
 
     def remove_character(self):
-        self.__file.modify_contents(Delete(), *self.get_cursor_position())
+        if (self.__cursor.get_insert_state()):
+            self.__file.modify_contents(Delete(), *self.__cursor.get_cursor_location())
+            return
+        self.__file.modify_contents(Delete(), self.__cursor.get_cursor_location()[0], self.__cursor.get_cursor_location()[1] + 1)
         self.__cursor.move_column(-1)
+
+    def get_insert_state(self):
+        return self.__cursor.get_insert_state()
+    
+    def refresh(self):
+        self.__cursor.set_document_row_length(len(self.__file.get_file_contents()))
+        self.__cursor.set_current_line_length(len(self.__file.get_line(self.get_cursor_position()[0])))

@@ -1,5 +1,3 @@
-from utility.logger import Logger
-
 class Cursor:
     """Class representing a user's cursor"""
     def __init__(self, document_row_length : int, current_line_length : int) -> None:
@@ -7,8 +5,8 @@ class Cursor:
         self.__row_number : int = 0
         # insert dictates whether the cursor will 
         # replace the selected character or insert a character there
-        self.__insert : bool = True
-        self.__current_line_length : int = current_line_length
+        self.__insert : bool = False
+        self.__current_line_length : int = current_line_length + 1
         self.__document_row_length : int = document_row_length
 
     def toggle_insert(self):
@@ -19,7 +17,6 @@ class Cursor:
         Move cursor right direction amount of times,
         if it reaches the bounds of the row it will not leave the row.
         """
-        logger = Logger("log2.txt")
         if (self.__column_number + direction < 0):
             self.__column_number = 0
             return
@@ -49,3 +46,6 @@ class Cursor:
     
     def set_document_row_length(self, new_row_length : int):
         self.__document_row_length = new_row_length
+
+    def get_insert_state(self):
+        return self.__insert
