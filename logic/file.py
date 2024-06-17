@@ -24,7 +24,7 @@ class File:
             f.close()
         return file_contents
 
-    def write_to_file(self):
+    def write_to_file(self) -> None:
         """Writes current contents to file on disk"""
         with open(self._path, "w") as file:
             for line in self._contents:
@@ -36,14 +36,14 @@ class File:
         """
         self._contents[line] = command.execute_command(self._contents[line], *args)
 
-    def get_line(self, line: int):
+    def get_line(self, line: int) -> str:
         return self._contents[line]
 
-    def set_line(self, line: int, new_line: str):
+    def set_line(self, line: int, new_line: str) -> None:
         self._contents[line] = new_line
 
     def get_file_contents(self) -> list[str]:
         return self._contents
 
-    def set_file_contents(self, new_file_contents: list[str]):
+    def set_file_contents(self, new_file_contents: list[str]) -> None:
         self._contents = new_file_contents

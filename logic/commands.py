@@ -18,27 +18,27 @@ def _delete(line: str, index: int) -> str:
     return newline
 
 
-def _change(line: str, index: int, newchar: str):
+def _change(line: str, index: int, newchar: str) -> str:
     newline = line[0:index] + newchar + line[index + 1 :]
     return newline
 
 
-def _insert(line: str, index: int, newchar: str):
+def _insert(line: str, index: int, newchar: str) -> str:
     newline = line[0:index] + newchar + line[index:]
     return newline
 
 
-def _append(line: str, newchar: str):
+def _append(line: str, newchar: str) -> str:
     newline = line + "\n" + newchar
     return newline
 
 
-def _new_line(line: str, index: int):
+def _new_line(line: str, index: int) -> str:
     newline = line[0:index] + "\n" + line[index:]
     return newline
 
 
-def _delete_line(*args):
+def _delete_line(*args) -> str:
     return ""
 
 

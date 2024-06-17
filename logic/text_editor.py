@@ -17,15 +17,15 @@ class TextEditor:
         )
         self._indent_size = 4
 
-    def _get_current_line_length(self):
+    def _get_current_line_length(self) -> int:
         lines = self.get_current_document_contents()
         cursor_row = self.get_cursor_position()[0]
         return len(lines[cursor_row])
     
-    def _get_current_number_of_rows(self):
+    def _get_current_number_of_rows(self) -> int:
         return len(self.get_current_document_contents())
     
-    def get_current_document_contents(self):
+    def get_current_document_contents(self) -> list[str]:
         """
         Returns the file contents as a list of strings (each entry is a row).
         """
@@ -39,10 +39,10 @@ class TextEditor:
         self._cursor.move_row(row_movement)
         self._cursor.set_current_line_length(self._get_current_line_length())
 
-    def get_cursor_position(self):
+    def get_cursor_position(self) -> tuple[int, int]:
         return self._cursor.get_cursor_location()
 
-    def insert_new_line(self):
+    def insert_new_line(self) -> None:
         """
         Inserts a new line where the cursor is currently pointing
         """
@@ -54,13 +54,13 @@ class TextEditor:
         self._cursor.set_document_row_length(self._get_current_number_of_rows())
         self.move_cursor(1, 0)
 
-    def save_file(self):
+    def save_file(self) -> None:
         """
         Writes the stored file changes to the file associated to it.
         """
         self._file.write_to_file()
 
-    def _delete_line(self, i: int):
+    def _delete_line(self, i: int) -> None:
         temp = self.get_current_document_contents()
         temp.pop(i)
         self._file.set_file_contents(temp)
@@ -97,14 +97,14 @@ class TextEditor:
     def get_insert_state(self) -> bool:
         return self._cursor.get_insert_state()
 
-    def refresh(self):
+    def refresh(self) -> None:
         """
         Refreshes the stored length of the document and stored current line length
         """
         self._cursor.set_document_row_length(self._get_current_number_of_rows())
         self._cursor.set_current_line_length(self._get_current_line_length())
-        self._cursor.check_bounds()
+        self._cursor.bound_cursor()
 
-    def insert_tab(self):
+    def insert_tab(self) -> None:
         for i in range(self._indent_size):
             self.write_character(" ")
