@@ -53,9 +53,6 @@ def run(screen) -> None:
         else:
             curses.curs_set(1)
 
-        logger.log(str(Keys.BACKSPACE))
-        logger.write_log()
-
         # match case used for special characters
         match (user_input):
             case curses.KEY_UP:
@@ -86,6 +83,7 @@ def run(screen) -> None:
 
         logger.log(str(text_editor.get_current_document_contents()))
         logger.log(str(text_editor.get_cursor_position()))
+        logger.write_log()
 
         screen.clear()
         screen.refresh()
@@ -94,6 +92,7 @@ def run(screen) -> None:
     logger.log(f"File {file_path}")
     logger.log("Closing text editor")
     logger.write_log()
+
 
 
 def start_editor():
