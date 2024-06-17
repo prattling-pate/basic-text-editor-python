@@ -18,9 +18,12 @@ class TextEditor:
         self._indent_size = 4
 
     def _get_current_line_length(self) -> int:
+        return len(self._get_current_line())
+
+    def _get_current_line(self) -> str:
         lines = self.get_current_document_contents()
         cursor_row = self.get_cursor_position()[0]
-        return len(lines[cursor_row])
+        return lines[cursor_row]
     
     def _get_current_number_of_rows(self) -> int:
         return len(self.get_current_document_contents())
@@ -131,6 +134,8 @@ class TextEditor:
     def undo_tab(self):
         """Removes a certain number of space in order to simulate undoing a tab indent"""
         count = self._indent_size
-        while (count > 1 and self.get_cursor_position()[1] > 0):
-            self.remove_character()
-            count -= 1
+        current_column = self.get_cursor_position()[1]
+        if (self._get_current_line()[current_column-count:current_column] == " "*count):
+            while (count > 0 and self.get_cursor_position()[1] > 0):
+                self.remove_character()
+                count -= 1

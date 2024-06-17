@@ -1,5 +1,6 @@
 from utility.logger import Logger
 from logic.text_editor import TextEditor
+from UI.keys import Keys
 import curses
 import sys
 
@@ -40,28 +41,31 @@ def run(stdscr) -> None:
         else:
             curses.curs_set(1)
 
-        if user_input == curses.KEY_UP:
-            text_editor.move_cursor(-1, 0)
-        elif user_input == curses.KEY_DOWN:
-            text_editor.move_cursor(1, 0)
-        elif user_input == curses.KEY_LEFT:
-            text_editor.move_cursor(0, -1)
-        elif user_input == curses.KEY_RIGHT:
-            text_editor.move_cursor(0, 1)
-        elif user_input == 330:
-            text_editor.delete_current_line()
-        elif user_input == 263:
-            text_editor.remove_character()
-        elif user_input == 27:
-            running = False
-        # enter key is equal to 10
-        elif user_input == 10:
-            text_editor.insert_new_line()
-        elif user_input == ord("\t"):
-            text_editor.insert_tab()
-        elif user_input == 353:
-            text_editor.undo_tab()
-        elif chr(user_input).isascii():
+        # match case used for special characters
+        match(user_input):
+            case curses.KEY_UP:
+                text_editor.move_cursor(-1, 0)
+            case curses.KEY_DOWN:
+                text_editor.move_cursor(1, 0)
+            case curses.KEY_LEFT:
+                text_editor.move_cursor(0, -1)
+            case curses.KEY_RIGHT:
+                text_editor.move_cursor(0, 1)
+            case Keys.DELETE:
+                text_editor.delete_current_line()
+            case Keys.BACKSPACE:
+                text_editor.remove_character()
+            case Keys.ESCAPE:
+                running = False
+            case Keys.ENTER:
+                text_editor.insert_new_line()
+            case Keys.TAB:
+                text_editor.insert_tab()
+            case Keys.BACK_TAB:
+                text_editor.undo_tab()
+
+        # else type in the normal character
+        if chr(user_input).isascii():
             text_editor.write_character(chr(user_input))
 
         
