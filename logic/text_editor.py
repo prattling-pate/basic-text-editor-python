@@ -97,19 +97,19 @@ class TextEditor:
         self._file.set_file_contents(temp_list)
 
     def remove_character(self) -> None:
-        logger = Logger("log_text_editor.txt")
         # if at far left of line, delete new line
         if self.get_cursor_position()[0] > 0 and self.get_cursor_position()[1] == 0:
             pre_length = self._get_current_line_length()
             self._remove_new_line_at_current_position()
             self._cursor.move_row(-1)
             self._cursor.set_column(self._get_current_line_length() - pre_length)
+        # do not do anything if at the 0,0 position
         elif self.get_cursor_position() == (0,0):
             pass
+        # else generally move back one character and then delete the character at that position
         else:
             self._cursor.move_column(-1)
             self._file.modify_contents(Delete(), *self._cursor.get_cursor_location())
-        logger.write_log()
 
 
     def get_insert_state(self) -> bool:
