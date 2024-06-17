@@ -131,10 +131,7 @@ class TextEditor:
         """Removes a certain number of space in order to simulate undoing a tab indent"""
         count = self._indent_size
         current_column = self.get_cursor_position()[1]
-        if (
-            self._get_current_line()[current_column - count : current_column]
-            == " " * count
-        ):
+        if (self._get_current_line()[current_column - count : current_column] == " " * count):
             while count > 0 and self.get_cursor_position()[1] > 0:
                 self.remove_character()
                 count -= 1
