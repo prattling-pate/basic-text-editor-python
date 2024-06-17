@@ -1,6 +1,7 @@
 from logic.commands import *
 from logic.file import File
 from logic.cursor import Cursor
+from utility.logger import Logger
 
 
 class TextEditor:
@@ -12,9 +13,8 @@ class TextEditor:
 
     def __init__(self, file_path: str):
         self._file = File(file_path)
-        self._cursor = Cursor(
-            len(self._file.get_file_contents()), len(self._file.get_line(0))
-        )
+        self._cursor = Cursor(self._get_current_number_of_rows(), len(self._file.get_line(0)))
+        self._insert_state = False
         self._indent_size = 4
 
     def _get_current_line_length(self) -> int:
@@ -61,6 +61,7 @@ class TextEditor:
         self._file.write_to_file()
 
     def _delete_line(self, i: int) -> None:
+        """Deletes the line at row i"""
         temp = self.get_current_document_contents()
         temp.pop(i)
         self._file.set_file_contents(temp)
@@ -82,20 +83,39 @@ class TextEditor:
         self._cursor.set_current_line_length(self._get_current_line_length())
 
     def write_character(self, char: str) -> None:
+        """Inserts a given character at the editor's cursor's current position"""
         self._file.modify_contents(Insert(), *self._cursor.get_cursor_location(), char)
         self._cursor.set_current_line_length(self._get_current_line_length())
         self._cursor.move_column(1)
 
+    def _remove_new_line_at_current_position(self) -> None:
+        this_line = self.get_cursor_position()[0]
+        prev_line = this_line - 1
+        temp_list = self.get_current_document_contents()
+        temp_list[prev_line]+=temp_list[this_line]
+        temp_list.pop(this_line)
+        self._file.set_file_contents(temp_list)
+
     def remove_character(self) -> None:
-        self._cursor.move_column(-1)
-        current_line = self.get_cursor_position()[0]
-        if len(self._file.get_line(current_line)) == 0:
-            self.delete_current_line()
+        logger = Logger("log_text_editor.txt")
+        # if at far left of line, delete new line
+        if self.get_cursor_position()[0] > 0 and self.get_cursor_position()[1] == 0:
+            self._remove_new_line_at_current_position()
+            logger.log(str(self.get_cursor_position()))
+            self._cursor.move_row(-1)
+            self._cursor.move_column(self._get_current_line_length())
+            logger.log(str(self.get_cursor_position()))
+            logger.log(str(self._get_current_line_length()))
+        elif self.get_cursor_position() == (0,0):
+            pass
         else:
+            self._cursor.move_column(-1)
             self._file.modify_contents(Delete(), *self._cursor.get_cursor_location())
+        logger.write_log()
+
 
     def get_insert_state(self) -> bool:
-        return self._cursor.get_insert_state()
+        return self._insert_state
 
     def refresh(self) -> None:
         """
@@ -106,5 +126,13 @@ class TextEditor:
         self._cursor.bound_cursor()
 
     def insert_tab(self) -> None:
+        """Inserts a certain number of spaces in order to simulate a tab indent"""
         for i in range(self._indent_size):
             self.write_character(" ")
+
+    def undo_tab(self):
+        """Removes a certain number of space in order to simulate undoing a tab indent"""
+        count = self._indent_size
+        while (count > 1 and self.get_cursor_position()[1] > 0):
+            self.remove_character()
+            count -= 1

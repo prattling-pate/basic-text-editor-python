@@ -4,15 +4,9 @@ class Cursor:
     def __init__(self, document_row_length: int, current_line_length: int) -> None:
         self._column_number: int = 0
         self._row_number: int = 0
-        # insert dictates whether the cursor will
-        # replace the selected character or insert a character there
-        self._insert: bool = False
         self._current_line_length: int = current_line_length + 1
         self._document_row_length: int = document_row_length
-
-    def toggle_insert(self) -> None:
-        self._insert = not self._insert
-
+        
     def move_column(self, direction: int) -> None:
         """
         Move cursor right direction amount of times,
@@ -47,9 +41,6 @@ class Cursor:
 
     def set_document_row_length(self, new_row_length: int) -> None:
         self._document_row_length = new_row_length
-
-    def get_insert_state(self) -> bool:
-        return self._insert
 
     def bound_cursor(self) -> None:
         if self._row_number < 0:

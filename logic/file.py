@@ -31,16 +31,14 @@ class File:
                 file.write(line + "\n")
 
     def modify_contents(self, command: Command, line: int, *args) -> None:
-        """
-        Modifies the contents of the file given a line number and string index
-        """
+        """Modifies the contents of the file given a line number and string index"""
         self._contents[line] = command.execute_command(self._contents[line], *args)
 
-    def get_line(self, line: int) -> str:
-        return self._contents[line]
+    def get_line(self, index: int) -> str:
+        return self._contents[index]
 
-    def set_line(self, line: int, new_line: str) -> None:
-        self._contents[line] = new_line
+    def set_line(self, index: int, new_line: str) -> None:
+        self._contents[index] = new_line
 
     def get_file_contents(self) -> list[str]:
         return self._contents

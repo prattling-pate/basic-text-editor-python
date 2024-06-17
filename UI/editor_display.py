@@ -59,6 +59,8 @@ def run(stdscr) -> None:
             text_editor.insert_new_line()
         elif user_input == ord("\t"):
             text_editor.insert_tab()
+        elif user_input == 353:
+            text_editor.undo_tab()
         elif chr(user_input).isascii():
             text_editor.write_character(chr(user_input))
 
