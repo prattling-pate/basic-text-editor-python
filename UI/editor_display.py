@@ -17,18 +17,18 @@ def update_cursor(text_editor: TextEditor, stdscr: curses.window):
     )
     stdscr.move(current_row_visual, current_column_visual)
 
-def display_documentation_instructions(stdscr: curses.window):
-    stdscr.addstr("INSERT INSTRUCTIONS HERE")
+def display_documentation_instructions(screen: curses.window):
+    screen.addstr("INSERT INSTRUCTIONS HERE")
 
 
-def run(stdscr) -> None:
+def run(screen) -> None:
     """Entry point into application"""
 
     file_path = sys.argv[1]
 
     logger = Logger("log.txt")
 
-    stdscr.clear()
+    screen.clear()
 
     running = True
 
@@ -38,13 +38,13 @@ def run(stdscr) -> None:
 
     while running:
 
-        display_editor(text_editor, stdscr)
+        display_editor(text_editor, screen)
 
-        display_documentation_instructions(stdscr)
+        display_documentation_instructions(screen)
         
-        update_cursor(text_editor, stdscr)
+        update_cursor(text_editor, screen)
 
-        user_input = stdscr.getch()
+        user_input = screen.getch()
 
         logger.log("key pressed: " + str(user_input))
 
@@ -87,8 +87,8 @@ def run(stdscr) -> None:
         logger.log(str(text_editor.get_current_document_contents()))
         logger.log(str(text_editor.get_cursor_position()))
 
-        stdscr.clear()
-        stdscr.refresh()
+        screen.clear()
+        screen.refresh()
 
     text_editor.save_file()
     logger.log(f"File {file_path}")
