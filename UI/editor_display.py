@@ -5,10 +5,23 @@ import curses
 import sys
 
 
+def display_editor(text_editor: TextEditor, stdscr: curses.window):
+    for i, line in enumerate(text_editor.get_current_document_contents(), 1):
+        stdscr.addstr(f"{i}:{line}\n")
+
+
+def update_cursor(text_editor, stdscr):
+    current_row_visual, current_column_logical = text_editor.get_cursor_position()
+    current_column_visual = (
+        current_column_logical + len(str(text_editor.get_cursor_position()[0] + 1)) + 1
+    )
+    stdscr.move(current_row_visual, current_column_visual)
+
+
 def run(stdscr) -> None:
     """Entry point into application"""
 
-    file_path=sys.argv[1]
+    file_path = sys.argv[1]
 
     logger = Logger("log.txt")
 
@@ -22,15 +35,9 @@ def run(stdscr) -> None:
 
     while running:
 
-        for i, line in enumerate(text_editor.get_current_document_contents(), 1):
-            stdscr.addstr(f"{i}:{line}\n")
+        display_editor(text_editor, stdscr)
 
-        stdscr.move(
-            text_editor.get_cursor_position()[0],
-            text_editor.get_cursor_position()[1]
-            + len(str(text_editor.get_cursor_position()[0] + 1))
-            + 1
-        )
+        update_cursor(text_editor, stdscr)
 
         user_input = stdscr.getch()
 
@@ -41,8 +48,11 @@ def run(stdscr) -> None:
         else:
             curses.curs_set(1)
 
+        logger.log(str(Keys.BACKSPACE))
+        logger.write_log()
+
         # match case used for special characters
-        match(user_input):
+        match (user_input):
             case curses.KEY_UP:
                 text_editor.move_cursor(-1, 0)
             case curses.KEY_DOWN:
@@ -51,24 +61,22 @@ def run(stdscr) -> None:
                 text_editor.move_cursor(0, -1)
             case curses.KEY_RIGHT:
                 text_editor.move_cursor(0, 1)
-            case Keys.DELETE:
+            case Keys.DELETE.value:
                 text_editor.delete_current_line()
-            case Keys.BACKSPACE:
+            case Keys.BACKSPACE.value:
                 text_editor.remove_character()
-            case Keys.ESCAPE:
+            case Keys.ESCAPE.value:
                 running = False
-            case Keys.ENTER:
+            case Keys.ENTER.value:
                 text_editor.insert_new_line()
-            case Keys.TAB:
+            case Keys.TAB.value:
                 text_editor.insert_tab()
-            case Keys.BACK_TAB:
+            case Keys.BACK_TAB.value:
                 text_editor.undo_tab()
+            # else type in the normal character
+            case _:
+                text_editor.write_character(chr(user_input))
 
-        # else type in the normal character
-        if chr(user_input).isascii():
-            text_editor.write_character(chr(user_input))
-
-        
         text_editor.refresh()
 
         logger.log(str(text_editor.get_current_document_contents()))

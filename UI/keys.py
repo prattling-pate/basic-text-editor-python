@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Keys(Enum):
     DELETE = 330
     BACKSPACE = 263

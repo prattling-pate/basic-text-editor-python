@@ -2,19 +2,7 @@ from typing import Callable
 
 
 def _delete(line: str, index: int) -> str:
-    from utility.logger import Logger
-
-    logger = Logger("log_commands.txt")
     newline = line[0:index] + line[index + 1 :]
-    logger.log(
-        "<DELETE> "
-        + repr(line)
-        + " : "
-        + repr(line[0:index])
-        + " : "
-        + repr(line[index + 1 :])
-    )
-    logger.write_log()
     return newline
 
 

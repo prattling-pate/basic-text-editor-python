@@ -6,7 +6,7 @@ class Cursor:
         self._row_number: int = 0
         self._current_line_length: int = current_line_length + 1
         self._document_row_length: int = document_row_length
-        
+
     def move_column(self, direction: int) -> None:
         """
         Move cursor right direction amount of times,
@@ -33,7 +33,7 @@ class Cursor:
             return
         self._row_number += direction
 
-    def set_current_line_length(self, new_line_length : int) -> None:
+    def set_current_line_length(self, new_line_length: int) -> None:
         self._current_line_length = new_line_length + 1
 
     def get_cursor_location(self) -> tuple[int, int]:
@@ -52,5 +52,5 @@ class Cursor:
         elif self._column_number >= self._current_line_length:
             self._column_number = self._current_line_length - 1
 
-    def set_column(self, column : int):
+    def set_column(self, column: int):
         self._column_number = column
