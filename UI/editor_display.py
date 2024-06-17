@@ -10,12 +10,15 @@ def display_editor(text_editor: TextEditor, stdscr: curses.window):
         stdscr.addstr(f"{i}:{line}\n")
 
 
-def update_cursor(text_editor, stdscr):
+def update_cursor(text_editor: TextEditor, stdscr: curses.window):
     current_row_visual, current_column_logical = text_editor.get_cursor_position()
     current_column_visual = (
         current_column_logical + len(str(text_editor.get_cursor_position()[0] + 1)) + 1
     )
     stdscr.move(current_row_visual, current_column_visual)
+
+def display_documentation_instructions(stdscr: curses.window):
+    stdscr.addstr("INSERT INSTRUCTIONS HERE")
 
 
 def run(stdscr) -> None:
@@ -37,6 +40,8 @@ def run(stdscr) -> None:
 
         display_editor(text_editor, stdscr)
 
+        display_documentation_instructions(stdscr)
+        
         update_cursor(text_editor, stdscr)
 
         user_input = stdscr.getch()
