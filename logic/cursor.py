@@ -43,6 +43,9 @@ class Cursor:
         self._document_row_length = new_row_length
 
     def bound_cursor(self) -> None:
+        """
+        Checks bounds on cursor (fixes out of bounds)
+        """
         if self._row_number < 0:
             self._row_number = 0
         elif self._row_number >= self._document_row_length:
