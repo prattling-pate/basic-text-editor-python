@@ -51,3 +51,6 @@ class Cursor:
             self._column_number = 0
         elif self._column_number >= self._current_line_length:
             self._column_number = self._current_line_length - 1
+
+    def set_column(self, column : int):
+        self._column_number = column
