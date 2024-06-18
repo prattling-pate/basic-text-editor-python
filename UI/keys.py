@@ -8,3 +8,6 @@ class Keys(Enum):
     ENTER = 10
     TAB = ord("\t")
     BACK_TAB = 353
+    CTRL_C = 3
+    HOME = 262
+    END = 360

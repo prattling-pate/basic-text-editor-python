@@ -30,6 +30,10 @@ def run(screen) -> None:
 
     screen.clear()
 
+    curses.noecho()
+
+    curses.raw()
+
     running = True
 
     text_editor = TextEditor(file_path)
@@ -75,6 +79,10 @@ def run(screen) -> None:
                 text_editor.insert_tab()
             case Keys.BACK_TAB.value:
                 text_editor.undo_tab()
+            case Keys.HOME.value:
+                text_editor.move_cursor_to_beginning()
+            case Keys.END.value:
+                text_editor.move_cursor_to_end()
             # else type in the normal character
             case _:
                 text_editor.write_character(chr(user_input))

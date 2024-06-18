@@ -12,12 +12,17 @@ class TextEditor:
     """
 
     def __init__(self, file_path: str):
-        self._file = File(file_path)
-        self._cursor = Cursor(
+        self._file : File = File(file_path)
+        self._cursor : Cursor = Cursor(
             self._get_current_number_of_rows(), len(self._file.get_line(0))
         )
-        self._insert_state = False
-        self._indent_size = 4
+        self._insert_state : bool = False
+        self._indent_size : int = 4
+        self._highlighting : bool = False
+        self._highlighted : list[tuple[int,int]] = []
+
+    def toggle_highlighting(self):
+        self._highlighting = not self._highlighting
 
     def _get_current_line_length(self) -> int:
         return len(self._get_current_line())
@@ -41,8 +46,19 @@ class TextEditor:
         Moves the cursor row_movement rows to the right and column_movement columns down.
         """
         self._cursor.move_column(column_movement)
+        if abs(column_movement) > 0:
+            self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
         self._cursor.move_row(row_movement)
         self._cursor.set_current_line_length(self._get_current_line_length())
+        self._cursor.attempt_to_move_to_last_visited_index()
+        # if highlighting then add new 
+        if self._highlighting:
+            current_location = self._cursor.get_cursor_location()
+            if current_location not in self._highlighted:
+                self._highlighted.append(current_location)
+        else:
+            self._highlighted.clear()
+
 
     def get_cursor_position(self) -> tuple[int, int]:
         return self._cursor.get_cursor_location()
@@ -57,7 +73,7 @@ class TextEditor:
             temp_list += line.split("\n")
         self._file.set_file_contents(temp_list)
         self._cursor.set_document_row_length(self._get_current_number_of_rows())
-        self.move_cursor(1, 0)
+        self._cursor.move_row(1)
 
     def save_file(self) -> None:
         """
@@ -137,3 +153,9 @@ class TextEditor:
         while count > 0 and self.get_cursor_position()[1] > 0:
             self.remove_character()
             count -= 1
+
+    def move_cursor_to_beginning(self):
+        self._cursor.move_column(-(self._cursor.get_cursor_location()[1] + 1))
+
+    def move_cursor_to_end(self):
+        self._cursor.move_column(self._get_current_line_length())
