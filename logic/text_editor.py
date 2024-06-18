@@ -46,6 +46,7 @@ class TextEditor:
         Moves the cursor row_movement rows to the right and column_movement columns down.
         """
         self._cursor.move_column(column_movement)
+        # if moving cursor horizontally then store the last visited index
         if abs(column_movement) > 0:
             self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
         self._cursor.move_row(row_movement)
@@ -156,6 +157,8 @@ class TextEditor:
 
     def move_cursor_to_beginning(self):
         self._cursor.move_column(-(self._cursor.get_cursor_location()[1] + 1))
+        self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
 
     def move_cursor_to_end(self):
         self._cursor.move_column(self._get_current_line_length())
+        self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
