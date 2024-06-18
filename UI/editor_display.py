@@ -17,6 +17,7 @@ def update_cursor(text_editor: TextEditor, stdscr: curses.window):
     )
     stdscr.move(current_row_visual, current_column_visual)
 
+
 def display_documentation_instructions(screen: curses.window):
     screen.addstr("INSERT INSTRUCTIONS HERE")
 
@@ -45,7 +46,7 @@ def run(screen) -> None:
         display_editor(text_editor, screen)
 
         display_documentation_instructions(screen)
-        
+
         update_cursor(text_editor, screen)
 
         user_input = screen.getch()
@@ -83,7 +84,17 @@ def run(screen) -> None:
                 text_editor.move_cursor_to_beginning()
             case Keys.END.value:
                 text_editor.move_cursor_to_end()
+            case Keys.SHIFT_UP.value:
+                text_editor.move_cursor(-1, 0, highlight=True)
+            case Keys.SHIFT_DOWN.value:
+                text_editor.move_cursor(1, 0, highlight=True)
+            case Keys.SHIFT_LEFT.value:
+                text_editor.move_cursor(0, -1, highlight=True)
+            case Keys.SHIFT_RIGHT.value:
+                text_editor.move_cursor(0, 1, highlight=True)
             # else type in the normal character
+            case Keys.CTRL_C.value:
+                text_editor.copy_to_clipboard()
             case _:
                 text_editor.write_character(chr(user_input))
 
@@ -100,7 +111,6 @@ def run(screen) -> None:
     logger.log(f"File {file_path}")
     logger.log("Closing text editor")
     logger.write_log()
-
 
 
 def start_editor():

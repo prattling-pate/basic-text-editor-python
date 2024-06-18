@@ -1,5 +1,3 @@
-from utility.logger import Logger
-
 class Cursor:
     """Class representing a user's cursor"""
 
@@ -8,7 +6,7 @@ class Cursor:
         self._row_number: int = 0
         self._current_line_length: int = current_line_length + 1
         self._document_row_length: int = document_row_length
-        self._last_visited_index : int = 0
+        self._last_visited_index: int = 0
 
     def move_column(self, direction: int) -> None:
         """
@@ -25,7 +23,7 @@ class Cursor:
 
     def set_last_visited_index(self, new_last_visited_index):
         self._last_visited_index = new_last_visited_index
-    
+
     def move_row(self, direction: int) -> None:
         """
         Move cursor down direction amount of times,
@@ -66,7 +64,4 @@ class Cursor:
         self._column_number = column
 
     def attempt_to_move_to_last_visited_index(self):
-        logger = Logger("log_cursor.txt")
-        logger.log(str(self._last_visited_index) + " : " + str(self._column_number))
         self.move_column(self._last_visited_index - self._column_number)
-        logger.write_log()
