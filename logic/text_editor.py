@@ -19,8 +19,10 @@ class TextEditor:
         )
         self._insert_state: bool = False
         self._indent_size: int = 4
-        self._highlighted: list[tuple[int, int]] = []
-        self._clipboard: list[tuple[int, int]] = []
+        self._highlighted: list[list[int]] = [
+            [] for i in range(len(self.get_current_document_contents()))
+        ]
+        self._clipboard: list[list[int]] = []
 
     def toggle_highlighting(self):
         self._highlighting = not self._highlighting
@@ -57,10 +59,15 @@ class TextEditor:
         self._cursor.set_current_line_length(self._get_current_line_length())
         self._cursor.attempt_to_move_to_last_visited_index()
         # if highlighting then add new char position to highlighted list
+        from utility.logger import Logger
+
+        logger = Logger("log_text_editor.txt")
         if highlight:
             current_location = self._cursor.get_cursor_location()
-            if current_location not in self._highlighted:
-                self._highlighted.append(current_location)
+            if current_location[1] not in self._highlighted[current_location[0]]:
+                self._highlighted[current_location[0]].append(current_location[1])
+        logger.log(str(self._highlighted))
+        logger.write_log()
 
     def get_cursor_position(self) -> tuple[int, int]:
         return self._cursor.get_cursor_location()
@@ -74,6 +81,7 @@ class TextEditor:
         for line in self.get_current_document_contents():
             temp_list += line.split("\n")
         self._file.set_file_contents(temp_list)
+        self._highlighted.insert(self._cursor.get_cursor_location()[0], [])
         self._cursor.set_document_row_length(self._get_current_number_of_rows())
         self._cursor.move_row(1)
 
@@ -106,10 +114,12 @@ class TextEditor:
         self._file.modify_contents(Insert(), *self._cursor.get_cursor_location(), char)
         self._cursor.set_current_line_length(self._get_current_line_length())
         self._cursor.move_column(1)
-        self._highlighted.clear()
+        for i in range(len(self._highlighted)):
+            self._highlighted[i].clear()
 
     def _remove_new_line_at_current_position(self) -> None:
         this_line = self.get_cursor_position()[0]
+        self._highlighted.pop(this_line)
         prev_line = this_line - 1
         temp_list = self.get_current_document_contents()
         temp_list[prev_line] += temp_list[this_line]
@@ -121,7 +131,8 @@ class TextEditor:
         Removes character at cursor, also deletes highlighted text
         recurse flag used to prevent infinite recursion when deleting highlighted text
         """
-        if len(self._highlighted) > 0 and recurse:
+        highlight_is_empty = is_list_non_zero(self._highlighted)
+        if not highlight_is_empty > 0 and recurse:
             self._remove_highlighted_chars()
             return
         # if at far left of line, delete new line
@@ -169,9 +180,8 @@ class TextEditor:
     def move_cursor_to_beginning(self, highlight: bool = False):
         cursor_row, cursor_column = self._cursor.get_cursor_location()
         if highlight:
-            self._highlighted += [
-                (cursor_row, i)
-                for i in range(cursor_column, self._get_current_line_length())
+            self._highlighted[cursor_row] += [
+                i for i in range(cursor_column, self._get_current_line_length())
             ]
         self._cursor.move_column(-(self._cursor.get_cursor_location()[1] + 1))
         self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
@@ -179,13 +189,12 @@ class TextEditor:
     def move_cursor_to_end(self, highlight: bool = False):
         cursor_row, cursor_column = self._cursor.get_cursor_location()
         if highlight:
-            self._highlighted += [(cursor_row, i) for i in range(cursor_column)]
+            self._highlighted[cursor_row] += [i for i in range(cursor_column)]
         self._cursor.move_column(self._get_current_line_length())
         self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
 
     def copy_to_clipboard(self):
         self._clipboard = self._highlighted
-        self._highlighted.clear()
 
     def paste_clipboard_contents(self):
         """
@@ -197,7 +206,6 @@ class TextEditor:
         """
         Deletes highlighted text all at once
         """
-        self._highlighted.clear()
 
     def _remove_character_at_coordinate(self, row: int, column: int):
         prev_cursor_row, prev_cursor_column = self.get_cursor_position()
