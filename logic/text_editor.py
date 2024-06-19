@@ -60,12 +60,13 @@ class TextEditor:
         self._cursor.attempt_to_move_to_last_visited_index()
         # if highlighting then add new char position to highlighted list
         from utility.logger import Logger
-
         logger = Logger("log_text_editor.txt")
         if highlight:
             current_location = self._cursor.get_cursor_location()
             if current_location[1] not in self._highlighted[current_location[0]]:
                 self._highlighted[current_location[0]].append(current_location[1])
+            else:
+                self._highlighted[current_location[0]].remove(current_location[1])
         logger.log(str(self._highlighted))
         logger.write_log()
 
@@ -206,6 +207,14 @@ class TextEditor:
         """
         Deletes highlighted text all at once
         """
+        for i, line in enumerate(self._highlighted):
+            if not is_list_ascending(line):
+                line.reverse()
+            count = 0
+            for column in line:
+                self._remove_character_at_coordinate(i, column + 1 - count)
+                count+=1
+            self._highlighted[i].clear()
 
     def _remove_character_at_coordinate(self, row: int, column: int):
         prev_cursor_row, prev_cursor_column = self.get_cursor_position()
