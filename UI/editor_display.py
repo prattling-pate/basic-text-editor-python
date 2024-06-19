@@ -101,6 +101,10 @@ def run(screen) -> None:
                 text_editor.paste_clipboard_contents()
             # case Keys.CTRL_Y.value:
             # case Keys.CTRL_Z.value:
+            case Keys.SHIFT_HOME.value:
+                text_editor.move_cursor_to_beginning(highlight=True)
+            case Keys.SHIFT_END.value:
+                text_editor.move_cursor_to_end(highlight=True)
             case _:
                 text_editor.write_character(chr(user_input))
 

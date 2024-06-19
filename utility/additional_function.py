@@ -5,7 +5,7 @@ def get_number_of_chars(string : str, char_in_string : str) -> int:
             sum +=1
     return sum
 
-def is_list_non_zero(list_array):
+def is_2d_list_empty(list_array):
     for row in list_array:
         if len(row) > 0:
             return False

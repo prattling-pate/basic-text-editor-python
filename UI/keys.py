@@ -14,7 +14,9 @@ class Keys(Enum):
     CTRL_V = 22
     CTRL_Y = 25
     HOME = 262
+    SHIFT_HOME = 391
     END = 360
+    SHIFT_END = 386
     SHIFT_UP = 337
     SHIFT_DOWN = 336
     SHIFT_LEFT = 393
