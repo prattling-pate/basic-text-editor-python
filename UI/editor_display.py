@@ -95,6 +95,12 @@ def run(screen) -> None:
             # else type in the normal character
             case Keys.CTRL_C.value:
                 text_editor.copy_to_clipboard()
+            case Keys.CTRL_X.value:
+                text_editor.cut_to_clipboard()
+            case Keys.CTRL_V.value:
+                text_editor.paste_clipboard_contents()
+            # case Keys.CTRL_Y.value:
+            # case Keys.CTRL_Z.value:
             case _:
                 text_editor.write_character(chr(user_input))
 

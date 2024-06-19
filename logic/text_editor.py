@@ -50,7 +50,13 @@ class TextEditor:
         """
         Moves the cursor row_movement rows to the right and column_movement columns down.
         """
-
+        # if highlighting then add new char position to highlighted list
+        if highlight:
+            current_location = self._cursor.get_cursor_location()
+            if current_location[1] not in self._highlighted[current_location[0]]:
+                self._highlighted[current_location[0]].append(current_location[1])
+            else:
+                self._highlighted[current_location[0]].remove(current_location[1])
         self._cursor.move_column(column_movement)
         # if moving cursor horizontally then store the last visited index
         if abs(column_movement) > 0:
@@ -58,17 +64,6 @@ class TextEditor:
         self._cursor.move_row(row_movement)
         self._cursor.set_current_line_length(self._get_current_line_length())
         self._cursor.attempt_to_move_to_last_visited_index()
-        # if highlighting then add new char position to highlighted list
-        from utility.logger import Logger
-        logger = Logger("log_text_editor.txt")
-        if highlight:
-            current_location = self._cursor.get_cursor_location()
-            if current_location[1] not in self._highlighted[current_location[0]]:
-                self._highlighted[current_location[0]].append(current_location[1])
-            else:
-                self._highlighted[current_location[0]].remove(current_location[1])
-        logger.log(str(self._highlighted))
-        logger.write_log()
 
     def get_cursor_position(self) -> tuple[int, int]:
         return self._cursor.get_cursor_location()
@@ -195,25 +190,40 @@ class TextEditor:
         self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
 
     def copy_to_clipboard(self):
-        self._clipboard = self._highlighted
+        self._clipboard = self._highlighted.copy()
+        for i, line in enumerate(self._highlighted):
+            self._clipboard[i] = line.copy()
+
+    def cut_to_clipboard(self):
+        self.copy_to_clipboard()
+        # clears highlighted list
+        for i in range(len(self._highlighted)):
+            self._highlighted[i].clear()
 
     def paste_clipboard_contents(self):
         """
         Pastes all contents of clipboard into editor
         """
-        pass
+        file_contents = self.get_current_document_contents()
+        for i, line in enumerate(self._clipboard):
+            # saves a tiny bit of computation
+            if not is_list_ascending(line):
+                line.sort()
+            for column in line:
+                self.write_character(file_contents[i][column])
 
     def _remove_highlighted_chars(self):
         """
         Deletes highlighted text all at once
         """
         for i, line in enumerate(self._highlighted):
+            # saves a tiny bit of computation
             if not is_list_ascending(line):
-                line.reverse()
+                line.sort()
             count = 0
             for column in line:
-                self._remove_character_at_coordinate(i, column + 1 - count)
-                count+=1
+                self._remove_character_at_coordinate(i, column - count)
+                count += 1
             self._highlighted[i].clear()
 
     def _remove_character_at_coordinate(self, row: int, column: int):
