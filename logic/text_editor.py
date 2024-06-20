@@ -184,6 +184,9 @@ class TextEditor:
         cursor_row, cursor_column = self._cursor.get_cursor_location()
         if highlight:
             self._highlighted[cursor_row] += [i for i in range(cursor_column, self._get_current_line_length())]
+            logger = Logger("text_editor_path.txt")
+            logger.log(str(self._highlighted))
+            logger.write_log()
         self._cursor.move_column(self._get_current_line_length())
         self._cursor.set_last_visited_index(self._cursor.get_cursor_location()[1])
 
@@ -208,23 +211,24 @@ class TextEditor:
             for character in line:
                 self.write_character(character)
 
-    
-    # DEBUG HERE --- FOR SOME REASON NOT DELETING THE LINES BUT MOVES THE CURSOR BACK!!!
     def _remove_highlighted_chars(self):
         """
         Deletes highlighted text all at once
         """
         logger = Logger("log_text_editor.txt")
         for i, line in enumerate(self._highlighted):
-            count = 0
+            if is_list_ascending(line):
+                line.sort(reverse=True)
+            logger.log(str(self._highlighted))
             for column in line:
-                self._remove_character_at_coordinate(i, column - count)
-                count += 1
-            logger.log(str(i) + " : " + str(count))
+                # off by one error when selecting from right OR left
+                self._remove_character_at_coordinate(i, column) 
+                logger.log(str(column))
             self._highlighted[i].clear()
         logger.write_log()
-
+    
     def _remove_character_at_coordinate(self, row: int, column: int):
         prev_cursor_row, prev_cursor_column = self.get_cursor_position()
-        self.move_cursor(row - prev_cursor_row, column - prev_cursor_column)
+        self._cursor.move_row(row - prev_cursor_row)
+        self._cursor.move_column(column - prev_cursor_column)
         self.remove_character(False)
