@@ -92,7 +92,6 @@ def run(screen) -> None:
                 text_editor.move_cursor(0, -1, highlight=True)
             case Keys.SHIFT_RIGHT.value:
                 text_editor.move_cursor(0, 1, highlight=True)
-            # else type in the normal character
             case Keys.CTRL_C.value:
                 text_editor.copy_to_clipboard()
             case Keys.CTRL_X.value:
