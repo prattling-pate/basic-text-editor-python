@@ -3,6 +3,7 @@ from logic.file import File
 from logic.cursor import Cursor
 from utility.additional_function import *
 from utility.logger import Logger
+from logic.undo_redo.undo_redo_stack import UndoRedoStack
 
 
 class TextEditor:
@@ -23,6 +24,8 @@ class TextEditor:
             [] for i in range(self._get_current_number_of_rows())
         ]
         self._clipboard: list[list[str]] = []
+        self._undo_redo_stack = UndoRedoStack()
+        self.push_current_state_to_stack()
 
     def toggle_highlighting(self):
         self._highlighting = not self._highlighting
@@ -31,8 +34,11 @@ class TextEditor:
         return len(self._get_current_line())
 
     def _get_current_line(self) -> str:
+        logger = Logger("log_text_editor.txt")
         lines = self.get_current_document_contents()
         cursor_row = self.get_cursor_position()[0]
+        logger.log(str(lines) + " : " + str(cursor_row))
+        logger.write_log()
         return lines[cursor_row]
 
     def _get_current_number_of_rows(self) -> int:
@@ -42,7 +48,7 @@ class TextEditor:
         """
         Returns the file contents as a list of strings (each entry is a row).
         """
-        return self._file.get_file_contents()
+        return self._file.get_file_contents().copy()
 
     def move_cursor(
         self, row_movement: int, column_movement: int, highlight: bool = False
@@ -158,6 +164,7 @@ class TextEditor:
         Refreshes the stored length of the document and stored current line length
         """
         self._cursor.set_document_row_length(self._get_current_number_of_rows())
+        self._cursor.bound_cursor()
         self._cursor.set_current_line_length(self._get_current_line_length())
         self._cursor.bound_cursor()
 
@@ -237,3 +244,30 @@ class TextEditor:
         self._cursor.move_row(row - prev_cursor_row)
         self._cursor.move_column(column - prev_cursor_column)
         self.remove_character(recurse = False, in_place = True)
+
+    def push_current_state_to_stack(self):
+        """
+        Pushes the current file document state to the undo/redo stack
+        """
+        self._undo_redo_stack.add_state(self.get_current_document_contents())
+    
+    def redo_last_change(self):
+        logger = Logger("log_text_editor.txt")
+        if self._undo_redo_stack.is_full():
+            return
+        redo = self._undo_redo_stack.redo()
+        self._file.set_file_contents(redo)
+        logger.log(str(redo))
+        logger.write_log()
+        
+    def undo_last_change(self):
+        logger = Logger("log_text_editor.txt")
+        logger.log(repr(self._undo_redo_stack))
+        logger.log(str(self._undo_redo_stack.is_empty()))
+        logger.write_log()
+        if self._undo_redo_stack.is_empty():
+            return
+        undo = self._undo_redo_stack.undo()
+        self._file.set_file_contents(undo)
+        logger.log(str(undo))
+        logger.write_log()
