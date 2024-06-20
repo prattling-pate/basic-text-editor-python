@@ -52,7 +52,12 @@ class TextEditor:
         """
         # if highlighting then add new char position to highlighted list
         if highlight:
-            current_location = self._cursor.get_cursor_location()
+            # want to select all characters left of cursor if moving left (exclusive of current position)
+            if column_movement < 0:
+                current_location =  self._cursor.get_cursor_location()[0], self._cursor.get_cursor_location()[1]+column_movement
+            # want to select all character right of cursor (inclusive of current position)
+            else:
+                current_location = self._cursor.get_cursor_location()
             if current_location[1] not in self._highlighted[current_location[0]]:
                 self._highlighted[current_location[0]].append(current_location[1])
             else:
@@ -122,7 +127,7 @@ class TextEditor:
         temp_list.pop(this_line)
         self._file.set_file_contents(temp_list)
 
-    def remove_character(self, recurse=True) -> None:
+    def remove_character(self, recurse=True, in_place=False) -> None:
         """
         Removes character at cursor, also deletes highlighted text
         recurse flag used to prevent infinite recursion when deleting highlighted text
@@ -138,11 +143,11 @@ class TextEditor:
             self._cursor.move_row(-1)
             self._cursor.set_column(self._get_current_line_length() - pre_length)
         # do not do anything if at the 0,0 position
-        elif self.get_cursor_position() == (0, 0):
+        elif self.get_cursor_position() == (0, 0) and not in_place:
             pass
         # else generally move back one character and then delete the character at that position
         else:
-            self._cursor.move_column(-1)
+            if not in_place: self._cursor.move_column(-1)
             self._file.modify_contents(Delete(), *self._cursor.get_cursor_location())
 
     def get_insert_state(self) -> bool:
@@ -223,7 +228,7 @@ class TextEditor:
             for column in line:
                 # off by one error when selecting from right OR left
                 self._remove_character_at_coordinate(i, column) 
-                logger.log(str(column))
+                logger.log(str(self.get_current_document_contents()))
             self._highlighted[i].clear()
         logger.write_log()
     
@@ -231,4 +236,4 @@ class TextEditor:
         prev_cursor_row, prev_cursor_column = self.get_cursor_position()
         self._cursor.move_row(row - prev_cursor_row)
         self._cursor.move_column(column - prev_cursor_column)
-        self.remove_character(False)
+        self.remove_character(recurse = False, in_place = True)
