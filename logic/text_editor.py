@@ -253,27 +253,24 @@ class TextEditor:
     
     def redo_last_change(self):
         logger = Logger("log_text_editor.txt")
+        logger.log(repr(self._undo_redo_stack))
+        logger.write_log()
         if self._undo_redo_stack.is_full():
             return
         try:
             redo = self._undo_redo_stack.redo()
             self._file.set_file_contents(redo)
-            logger.log(str(redo))
-            logger.write_log()
         except NoFutureStateException:
            return
         
     def undo_last_change(self):
         logger = Logger("log_text_editor.txt")
         logger.log(repr(self._undo_redo_stack))
-        logger.log(str(self._undo_redo_stack.is_empty()))
         logger.write_log()
         if self._undo_redo_stack.is_empty():
             return
         try:
             undo = self._undo_redo_stack.undo()
             self._file.set_file_contents(undo)
-            logger.log(str(undo))
-            logger.write_log()
         except NoPastStateException:
             return

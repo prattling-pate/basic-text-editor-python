@@ -7,7 +7,7 @@ class UndoRedoStack:
     Front pointer points to the current state of the program
     """
     def __init__(self):
-        self._buffer_size = 50
+        self._buffer_size = 100
         self._data = [[] for i in range(self._buffer_size)]
         self._back_pointer = -1
         self._front_pointer = -1
