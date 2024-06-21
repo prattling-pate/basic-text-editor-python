@@ -3,7 +3,7 @@ from logic.file import File
 from logic.cursor import Cursor
 from utility.additional_function import *
 from utility.logger import Logger
-from logic.undo_redo.undo_redo_stack import UndoRedoStack
+from logic.undo_redo.undo_redo_stack import NoFutureStateException, NoPastStateException, UndoRedoStack
 
 
 class TextEditor:
@@ -255,10 +255,13 @@ class TextEditor:
         logger = Logger("log_text_editor.txt")
         if self._undo_redo_stack.is_full():
             return
-        redo = self._undo_redo_stack.redo()
-        self._file.set_file_contents(redo)
-        logger.log(str(redo))
-        logger.write_log()
+        try:
+            redo = self._undo_redo_stack.redo()
+            self._file.set_file_contents(redo)
+            logger.log(str(redo))
+            logger.write_log()
+        except NoFutureStateException:
+           return
         
     def undo_last_change(self):
         logger = Logger("log_text_editor.txt")
@@ -267,7 +270,10 @@ class TextEditor:
         logger.write_log()
         if self._undo_redo_stack.is_empty():
             return
-        undo = self._undo_redo_stack.undo()
-        self._file.set_file_contents(undo)
-        logger.log(str(undo))
-        logger.write_log()
+        try:
+            undo = self._undo_redo_stack.undo()
+            self._file.set_file_contents(undo)
+            logger.log(str(undo))
+            logger.write_log()
+        except NoPastStateException:
+            return

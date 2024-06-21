@@ -69,22 +69,22 @@ def run(screen) -> None:
             case curses.KEY_RIGHT:
                 text_editor.move_cursor(0, 1)
             case Keys.DELETE.value:
-                text_editor.push_current_state_to_stack()
                 text_editor.delete_current_line()
-            case Keys.BACKSPACE.value:
                 text_editor.push_current_state_to_stack()
+            case Keys.BACKSPACE.value:
                 text_editor.remove_character()
+                text_editor.push_current_state_to_stack()
             case Keys.ESCAPE.value:
                 running = False
             case Keys.ENTER.value:
-                text_editor.push_current_state_to_stack()
                 text_editor.insert_new_line()
+                text_editor.push_current_state_to_stack()
             case Keys.TAB.value:
-                text_editor.push_current_state_to_stack()
                 text_editor.insert_tab()
-            case Keys.BACK_TAB.value:
                 text_editor.push_current_state_to_stack()
+            case Keys.BACK_TAB.value:
                 text_editor.undo_tab()
+                text_editor.push_current_state_to_stack()
             case Keys.HOME.value:
                 text_editor.move_cursor_to_beginning()
             case Keys.END.value:
@@ -100,11 +100,11 @@ def run(screen) -> None:
             case Keys.CTRL_C.value:
                 text_editor.copy_to_clipboard()
             case Keys.CTRL_X.value:
-                text_editor.push_current_state_to_stack()
                 text_editor.cut_to_clipboard()
-            case Keys.CTRL_V.value:
                 text_editor.push_current_state_to_stack()
+            case Keys.CTRL_V.value:
                 text_editor.paste_clipboard_contents()
+                text_editor.push_current_state_to_stack()
             case Keys.CTRL_Y.value:
                 text_editor.redo_last_change()
             case Keys.CTRL_Z.value:
@@ -114,8 +114,8 @@ def run(screen) -> None:
             case Keys.SHIFT_END.value:
                 text_editor.move_cursor_to_end(highlight=True)
             case _:
-                text_editor.push_current_state_to_stack()
                 text_editor.write_character(chr(user_input))
+                text_editor.push_current_state_to_stack()
 
         text_editor.refresh()
 
