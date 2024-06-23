@@ -12,7 +12,8 @@ I will attempt to rewrite this in a more appropriate language later down the lin
 2. Implement a cursor which represents where in the text file a user is pointing to input to (abstraction of a cursor) [Done]
 3. Implement a system for displaying this text file appropriately (i.e. every new line splits to a line break) [Done]
  - This may be possible with just print statements and clearing the terminal manually every update
-4. Undo/Redo (Trees...) [TODO]
+4. Undo/Redo (Trees...) [Done-ish]
+ - Need to debug additional new lines appearing where they shouldnt when re/un doing an action
 5. Search functionality [TODO]
 6. Save file (Obviously) [Done-ish]
  - Need to auto-save or allow user to save themselves
