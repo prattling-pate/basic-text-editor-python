@@ -13,12 +13,12 @@ class File:
         file_contents: list[str] = [""]
         try:
             with open(self._path, "r") as file:
+                # used to strip newline characters
                 file_contents = list(map(str.rstrip, file.readlines()))
                 # prevents IndexError when file has nothing inside of it
                 if len(file_contents) == 0:
                     file_contents.append("")
         except IOError:
-            # (f"cannot write to file @{self._path}, creating file")
             f = open(self._path, "x")
             f.write("")
             f.close()

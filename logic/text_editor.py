@@ -233,7 +233,6 @@ class TextEditor:
                 line.sort(reverse=True)
             logger.log(str(self._highlighted))
             for column in line:
-                # off by one error when selecting from right OR left
                 self._remove_character_at_coordinate(i, column) 
                 logger.log(str(self.get_current_document_contents()))
             self._highlighted[i].clear()
@@ -274,3 +273,5 @@ class TextEditor:
             self._file.set_file_contents(undo)
         except NoPastStateException:
             return
+        
+        

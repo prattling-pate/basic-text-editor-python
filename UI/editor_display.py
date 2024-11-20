@@ -19,13 +19,18 @@ def update_cursor(text_editor: TextEditor, stdscr: curses.window):
 
 
 def display_documentation_instructions(screen: curses.window):
-    screen.addstr("INSERT INSTRUCTIONS HERE")
+    # screen.addstr("INSERT INSTRUCTIONS HERE")
+    pass
 
 
 def run(screen) -> None:
     """Entry point into application"""
 
     file_path = sys.argv[1]
+
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+
+    screen.bkgd(' ', curses.color_pair(1) | curses.A_BOLD | curses.A_REVERSE)
 
     logger = Logger("log.txt")
 
